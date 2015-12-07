@@ -1,3 +1,3 @@
-Über diese Software
--------------------
+&Uuml;ber diese Software
+------------------------
 
