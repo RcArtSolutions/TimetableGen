@@ -1,6 +1,7 @@
 site_name: Zeitplan Generator
 repo_url: https://github.com/RcArtSolutions/DocTimetableGenerator
 repo_name: GitHub
+theme: amelia
 
 pages:
 - 'Einführung': 'index.md'
