@@ -1,0 +1,8 @@
+site_name: Zeitplan Generator
+repo_url: https://github.com/RcArtSolutions/DocTimetableGenerator
+repo_name: GitHub
+
+pages:
+- 'Einführung': 'index.md'
+- 'Anwender Guide': 'user-guide.md'
+- 'Über': 'about.md'
