@@ -37,6 +37,11 @@ namespace Rca.TtGen
         public List<Heat> Heats { get; set; }
 
         /// <summary>
+        /// Hält alle zu fahrenenden Runden (Finale, je A UND B) der Klasse ORE8
+        /// </summary>
+        public List<HeatRound> RoundsOre8 { get; set; }
+
+        /// <summary>
         /// Gesamtgröße der Final-Läufe
         /// </summary>
         public UInt16 GroupSize { get; set; }
@@ -360,6 +365,23 @@ namespace Rca.TtGen
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// Erzeugt die zu fahrenden Runder für die Klasse ORE8
+        /// </summary>
+        /// <param name="totalDrivers">Anzahl der Starter</param>
+        private void GenerateOre8Rounds(int totalDrivers)
+        {
+            RoundsOre8 = new List<HeatRound>();
+
+            FinalNameEnum curFin = FinalNameEnum.Finale;
+
+
+            for (int i = totalDrivers; i > 0; i--)
+            {
+
+            }
         }
 
         #endregion Internal services
