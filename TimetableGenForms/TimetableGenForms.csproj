@@ -51,6 +51,7 @@
     <Compile Include="ClassEnum.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="FinalCharEnum.cs" />
+    <Compile Include="HeatRound.cs" />
     <Compile Include="MainView.cs">
       <SubType>Form</SubType>
     </Compile>

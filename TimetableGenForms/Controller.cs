@@ -8,6 +8,9 @@ using System.ComponentModel;
 
 namespace Rca.TtGen
 {
+    /// <summary>
+    /// Modell
+    /// </summary>
     public class Controller : INotifyPropertyChanged
     {
         #region Member
@@ -37,6 +40,7 @@ namespace Rca.TtGen
         /// Gesamtgröße der Final-Läufe
         /// </summary>
         public UInt16 GroupSize { get; set; }
+
         /// <summary>
         /// Fahrer welche in ein Finallauf direkt eingeteilt werden
         /// </summary>
@@ -71,8 +75,14 @@ namespace Rca.TtGen
 
         public ClassDuration[] Durations { get; set; }
 
+        /// <summary>
+        /// Pausenzeit zwischen Läufen
+        /// </summary>
         public TimeSpan ChangeTime { get; set; }
 
+        /// <summary>
+        /// Startzeit des ersten Finales
+        /// </summary>
         public DateTime StartTime { get; set; }
 
         public bool AdditionalFinals { get; set; }

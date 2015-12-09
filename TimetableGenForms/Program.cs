@@ -18,6 +18,7 @@ namespace Rca.TtGen
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainView());
 
+            //Spashscreen für kann deaktiviert werden
             if (!args.ToList().Any(x => x == "dev"))
                 Application.Run(new SplashScreen(2500));
         }
