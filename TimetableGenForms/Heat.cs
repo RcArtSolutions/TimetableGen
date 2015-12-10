@@ -55,6 +55,11 @@ namespace Rca.TtGen
             }
         }
 
+        /// <summary>
+        /// Zusatzfinale
+        /// </summary>
+        public bool IsAdditional { get; set; }
+
         public int DriverCount { get; set; }
 
         /// <summary>
