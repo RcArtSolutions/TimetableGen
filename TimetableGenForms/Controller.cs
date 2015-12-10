@@ -120,6 +120,8 @@ namespace Rca.TtGen
 
             if (AdditionalFinals)
             {
+                GenerateOre8Rounds(ore8drv);
+
                 GenerateAdditionalHeats(ore8Heats);
             }
 
@@ -376,12 +378,61 @@ namespace Rca.TtGen
             RoundsOre8 = new List<HeatRound>();
 
             FinalNameEnum curFin = FinalNameEnum.Finale;
+            HeatRound curRound;
 
-
-            for (int i = totalDrivers; i > 0; i--)
+            while (totalDrivers > 0)
             {
+                curRound = new HeatRound(curFin);
 
+                curRound.Qualifier = 2 * ScheuduleDrivers;
+                switch (curFin)
+                {
+                    case FinalNameEnum.Finale:
+                        if (totalDrivers > GroupSize) //Es müssen 1/2 Finale gefahren werden
+                        {
+                            curRound.Qualifier = 0;
+                            curRound.Riser = GroupSize;
+                        }    
+                        else
+                        {
+                            curRound.Qualifier = totalDrivers;
+                            curRound.Riser = totalDrivers;
+                        }
+                        break;
+
+                    case FinalNameEnum.Finale_1_2:
+                        curRound.Riser = GroupSize;
+                        if (totalDrivers <= 2 * GroupSize) //Volles letztes Finale fahren
+                        {
+                            curRound.Qualifier = totalDrivers;
+                        }
+                        break;
+
+                    default: //Alle anderen Finale
+                        curRound.Riser = 2 * RisingDrivers;
+                        if (totalDrivers <= GroupSize && AddLastFinal) //Letztes Finale zusammen fassen
+                        {
+                            curRound.Qualifier = totalDrivers;
+                        }
+                        else if (totalDrivers <= 2 * GroupSize) //Volles letztes Finale fahren
+                        {
+                            curRound.Qualifier = totalDrivers;
+                        }
+                        break;
+                }
+
+                if (curFin != FinalNameEnum.Finale)
+                {
+                    RoundsOre8.Last().Places = RoundsOre8.Last().Qualifier + curRound.Riser;
+                }
+
+
+                totalDrivers -= curRound.Qualifier;
+                RoundsOre8.Add(curRound);
+                curFin++;
             }
+
+            RoundsOre8.Last().Places = RoundsOre8.Last().Qualifier;
         }
 
         #endregion Internal services

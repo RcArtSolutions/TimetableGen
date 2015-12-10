@@ -19,7 +19,7 @@ namespace Rca.TtGen
         /// <summary>
         /// Round (Finale)
         /// </summary>
-        public FinalNameEnum FinalName { get; private set; }
+        public FinalNameEnum RoundName { get; private set; }
 
         /// <summary>
         /// Tatsächliche Starter
@@ -40,17 +40,35 @@ namespace Rca.TtGen
         /// <summary>
         /// Nicht Aufsteiger
         /// </summary>
-        public int Looser { get; set; }
+        public int Looser
+        {
+            get
+            {
+                if ((Places - Riser) < 0)
+                    return 0;
+                else
+                    return Places - Riser;
+            }
+        }
 
         #endregion Properties
 
         #region Constructor
         /// <summary>
-        /// Empty constructor for HeatRound
+        /// Konstruiert ein leeres HeatRound-Objekt
         /// </summary>
         public HeatRound()
         {
 
+        }
+
+        /// <summary>
+        /// Konstruiert ein neues HeatRound-Objekt
+        /// </summary>
+        /// <param name="finalName">Round (Finale)</param>
+        public HeatRound(FinalNameEnum finalName)
+        {
+            this.RoundName = finalName;
         }
 
         #endregion Constructor
