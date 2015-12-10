@@ -117,12 +117,12 @@ namespace Rca.TtGen
             Queue<Heat> or8Heats = GenerateClassFinals(or8drv, ClassEnum.Or8);
             Queue<Heat> ortHeats = GenerateClassFinals(ortdrv, ClassEnum.Ort);
             Queue<Heat> ore8Heats = GenerateClassFinals(ore8drv, ClassEnum.Ore8);
+            Queue<Heat> ore8AdditionalHeats = null;
 
             if (AdditionalFinals)
             {
-                GenerateOre8Rounds(ore8drv);
-
-                GenerateAdditionalHeats(ore8Heats);
+                
+                GenerateAdditionalFinals(GenerateOre8Rounds(ore8drv), ClassEnum.Ore8);
             }
 
             while (or8Heats.Count > 0 || ortHeats.Count > 0 || ore8Heats.Count > 0)
@@ -370,12 +370,55 @@ namespace Rca.TtGen
         }
 
         /// <summary>
-        /// Erzeugt die zu fahrenden Runder für die Klasse ORE8
+        /// Erzeugt Zusatzfinale
+        /// </summary>
+        /// <param name="rounds"></param>
+        /// <returns></returns>
+        private Queue<Heat> GenerateAdditionalFinals(List<HeatRound> rounds, ClassEnum heatClass)
+        {
+            Queue<Heat> heats = new Queue<Heat>();
+            FinalCharEnum finChar = FinalCharEnum.A2;
+            int rest = 0;
+            foreach (HeatRound round in rounds)
+            {
+                if (rest < 0)
+                    rest = 0;
+                    
+                if ((round.Looser + rest) >= GroupSize)
+                {
+                    heats.Enqueue(new Heat(FinalNameEnum.Finale, finChar, GroupSize, heatClass, new TimeSpan(0,10,0), true));
+                    rest = round.Looser + rest - GroupSize;
+
+                    finChar--;
+                }
+                else
+                {
+                    rest = round.Looser + rest;
+                }
+
+                
+                if (rest >= GroupSize)
+                {
+                    heats.Enqueue(new Heat(FinalNameEnum.Finale, finChar, GroupSize, heatClass, new TimeSpan(0, 10, 0), true));
+                    rest -= GroupSize;
+
+                    finChar--;
+                }
+            }
+
+            if (rest > 0)
+                heats.Enqueue(new Heat(FinalNameEnum.Finale, finChar, rest, heatClass, new TimeSpan(0, 10, 0), true));
+
+            return heats;
+        }
+
+        /// <summary>
+        /// Erzeugt die zu fahrenden Runden
         /// </summary>
         /// <param name="totalDrivers">Anzahl der Starter</param>
-        private void GenerateOre8Rounds(int totalDrivers)
+        private List<HeatRound> GenerateOre8Rounds(int totalDrivers)
         {
-            RoundsOre8 = new List<HeatRound>();
+            List<HeatRound> rounds = new List<HeatRound>();
 
             FinalNameEnum curFin = FinalNameEnum.Finale;
             HeatRound curRound;
@@ -423,16 +466,20 @@ namespace Rca.TtGen
 
                 if (curFin != FinalNameEnum.Finale)
                 {
-                    RoundsOre8.Last().Places = RoundsOre8.Last().Qualifier + curRound.Riser;
+                    rounds.Last().Places = rounds.Last().Qualifier + curRound.Riser;
                 }
 
 
                 totalDrivers -= curRound.Qualifier;
-                RoundsOre8.Add(curRound);
+                rounds.Add(curRound);
                 curFin++;
             }
 
-            RoundsOre8.Last().Places = RoundsOre8.Last().Qualifier;
+            rounds.Last().Places = rounds.Last().Qualifier;
+
+            //rounds.Reverse();
+
+            return rounds;
         }
 
         #endregion Internal services

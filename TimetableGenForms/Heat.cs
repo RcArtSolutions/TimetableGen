@@ -121,7 +121,7 @@ namespace Rca.TtGen
 
         }
 
-        public Heat(FinalNameEnum finName, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass)
+        public Heat(FinalNameEnum finName, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, bool isAdditional = false)
         {
             var memInfo = typeof(FinalNameEnum).GetMember(finName.ToString());
             var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
@@ -131,9 +131,11 @@ namespace Rca.TtGen
             this.Letter = finChar;
             this.DriverCount = driverCnt;
             this.HeatClass = heatClass;
+
+            this.IsAdditional = isAdditional;
         }
 
-        public Heat(FinalNameEnum name, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, TimeSpan duration)
+        public Heat(FinalNameEnum name, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, TimeSpan duration, bool isAdditional = false)
         {
             var memInfo = typeof(FinalNameEnum).GetMember(name.ToString());
             var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
@@ -145,6 +147,8 @@ namespace Rca.TtGen
             this.HeatClass = heatClass;
 
             this.Duration = duration;
+
+            this.IsAdditional = isAdditional;
         }
 
         #endregion Constructor
