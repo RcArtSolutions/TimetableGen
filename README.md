@@ -1,5 +1,5 @@
-# Zeitplan Generator
-Mit diesem Zeitplan Generator ist es möglich, einen Zeitplan für die zu fahrenden Finale zu erstellen. Berücksichtigt werden hierbei die einzuteilenden Starter aus drei Klassen (OR8, ORE8 und ORT), sowie die Gruppengröße und die Startzeit
+# Zeitplan Generator (beta)
+Mit diesem Zeitplan Generator ist es mÃ¶glich, einen Zeitplan fÃ¼r die zu fahrenden Finale zu erstellen. BerÃ¼cksichtigt werden hierbei die einzuteilenden Starter aus drei Klassen (OR8, ORE8 und ORT), sowie die GruppengrÃ¶ÃŸe und die Startzeit
 
 
 
