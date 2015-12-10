@@ -19,8 +19,14 @@ namespace Rca.TtGen
         #endregion Member
 
         #region Properties
+        /// <summary>
+        /// Final-Name als String
+        /// </summary>
         public string FinalName { get; private set; }
 
+        /// <summary>
+        /// Finale
+        /// </summary>
         public FinalNameEnum Final
         {
             get
@@ -37,8 +43,14 @@ namespace Rca.TtGen
             }
         }
 
+        /// <summary>
+        /// Buchstabe als String
+        /// </summary>
         public string FinalLetter { get; private set; }
 
+        /// <summary>
+        /// Buchstabe
+        /// </summary>
         public FinalCharEnum Letter
         {
             get
@@ -58,8 +70,20 @@ namespace Rca.TtGen
         /// <summary>
         /// Zusatzfinale
         /// </summary>
-        public bool IsAdditional { get; set; }
+        public bool IsAdditional
+        {
+            get
+            {
+                if (Final == FinalNameEnum.AdditionalFinale)
+                    return true;
+                else
+                    return false;
+            }
+        }
 
+        /// <summary>
+        /// Eingeteilte Fahrer (Qualifier)
+        /// </summary>
         public int DriverCount { get; set; }
 
         /// <summary>
@@ -72,8 +96,14 @@ namespace Rca.TtGen
         /// </summary>
         public int UpwardDrivers { get; set; }
 
+        /// <summary>
+        /// Startzeit
+        /// </summary>
         public DateTime StartTime { get; set; }
 
+        /// <summary>
+        /// Endzeit
+        /// </summary>
         public DateTime EndTime
         {
             get
@@ -82,10 +112,19 @@ namespace Rca.TtGen
             }
         }
 
+        /// <summary>
+        /// Fahrzeit (Laufdauer)
+        /// </summary>
         public TimeSpan Duration { get; set; }
 
+        /// <summary>
+        /// Klassen-Name als String
+        /// </summary>
         public string ClassName { get; private set; }
 
+        /// <summary>
+        /// Klasse
+        /// </summary>
         public ClassEnum HeatClass
         {
             get
@@ -102,6 +141,9 @@ namespace Rca.TtGen
             }
         }
 
+        /// <summary>
+        /// Nicht aufsteigende Fahrer
+        /// </summary>
         public int RemainingDrivers
         {
             get
@@ -109,6 +151,11 @@ namespace Rca.TtGen
                 return DriverCount + UpwardDrivers - RisingDrivers;
             }
         }
+
+        /// <summary>
+        /// Erforderliches Finale, welches mindestens gefahren sein, damit 
+        /// </summary>
+        public FinalNameEnum RequiredRound { get; set; }
 
         #endregion Properties
 
@@ -121,7 +168,7 @@ namespace Rca.TtGen
 
         }
 
-        public Heat(FinalNameEnum finName, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, bool isAdditional = false)
+        public Heat(FinalNameEnum finName, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, FinalNameEnum requiredRound = FinalNameEnum.NotSet)
         {
             var memInfo = typeof(FinalNameEnum).GetMember(finName.ToString());
             var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
@@ -132,10 +179,10 @@ namespace Rca.TtGen
             this.DriverCount = driverCnt;
             this.HeatClass = heatClass;
 
-            this.IsAdditional = isAdditional;
+            this.RequiredRound = requiredRound;
         }
 
-        public Heat(FinalNameEnum name, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, TimeSpan duration, bool isAdditional = false)
+        public Heat(FinalNameEnum name, FinalCharEnum finChar, int driverCnt, ClassEnum heatClass, TimeSpan duration, FinalNameEnum requiredRound = FinalNameEnum.NotSet)
         {
             var memInfo = typeof(FinalNameEnum).GetMember(name.ToString());
             var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
@@ -148,7 +195,7 @@ namespace Rca.TtGen
 
             this.Duration = duration;
 
-            this.IsAdditional = isAdditional;
+            this.RequiredRound = requiredRound;
         }
 
         #endregion Constructor

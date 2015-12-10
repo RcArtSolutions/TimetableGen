@@ -9,6 +9,10 @@ namespace Rca.TtGen
 {
     public enum FinalNameEnum
     {
+        [Description("Nicht definiert")]
+        NotSet = -2,
+        [Description("Zusatz-Finale")]
+        AdditionalFinale = -1,
         [Description("Finale")]
         Finale = 0,
         [Description("1/2 Finale")]

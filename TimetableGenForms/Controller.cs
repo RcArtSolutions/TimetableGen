@@ -39,7 +39,7 @@ namespace Rca.TtGen
         /// <summary>
         /// Hält alle zu fahrenenden Runden (Finale, je A UND B) der Klasse ORE8
         /// </summary>
-        public List<HeatRound> RoundsOre8 { get; set; }
+        //public List<HeatRound> RoundsOre8 { get; set; }
 
         /// <summary>
         /// Gesamtgröße der Final-Läufe
@@ -117,19 +117,19 @@ namespace Rca.TtGen
             Queue<Heat> or8Heats = GenerateClassFinals(or8drv, ClassEnum.Or8);
             Queue<Heat> ortHeats = GenerateClassFinals(ortdrv, ClassEnum.Ort);
             Queue<Heat> ore8Heats = GenerateClassFinals(ore8drv, ClassEnum.Ore8);
-            Queue<Heat> ore8AdditionalHeats = null;
+            Queue<Heat> ore8AdditionalHeats = new Queue<Heat>();
 
             if (AdditionalFinals)
             {
-                
-                GenerateAdditionalFinals(GenerateOre8Rounds(ore8drv), ClassEnum.Ore8);
+                ore8AdditionalHeats = GenerateAdditionalFinals(GenerateOre8Rounds(ore8drv), ClassEnum.Ore8);
             }
 
-            while (or8Heats.Count > 0 || ortHeats.Count > 0 || ore8Heats.Count > 0)
+            while (or8Heats.Count > 0 || ortHeats.Count > 0 || ore8Heats.Count > 0 || ore8AdditionalHeats.Count > 0)
             {
                 if (FinalCount > 1)
                 {
                     ApplyHeat(ore8Heats); //Mit ORE8 beginnen -> ORE8-Finale wird einmal vor und einmal nach den Verbrenner-Finalen gefahren
+                    ApplyHeat(ore8AdditionalHeats);
                     ApplyHeat(or8Heats);
                     ApplyHeat(ortHeats);
                 }
@@ -138,6 +138,7 @@ namespace Rca.TtGen
                     ApplyHeat(or8Heats);
                     ApplyHeat(ortHeats);
                     ApplyHeat(ore8Heats);
+                    ApplyHeat(ore8AdditionalHeats);
                 }
             }
 
@@ -217,14 +218,35 @@ namespace Rca.TtGen
             return res;
         }
 
-        private bool AnyScheuduleEndFinals(ClassEnum excludeClass)
+        /// <summary>
+        /// Prüft ob noch Endfinale der entsprechenden Klasse in den Zeitplan übernommen werden müssen
+        /// </summary>
+        /// <param name="checkClass">Zu prüfenden Klasse</param>
+        /// <returns></returns>
+        private bool AnyScheuduleEndFinals(ClassEnum checkClass)
         {
             List<int> remainingEndFinals = RemainingEndFinals.ToList();
-            remainingEndFinals[(int)excludeClass]--;
+            remainingEndFinals[(int)checkClass]--;
 
             bool res = remainingEndFinals.Any(x => x > 0);
 
             return res;
+        }
+
+        /// <summary>
+        /// Prüft ob alle Finale der entsprechenden Klasse schon gefahren wurden
+        /// </summary>
+        /// <param name="checkHeat">Prüfparameter, Klasse und Final-Runde</param>
+        /// <returns></returns>
+        private bool FinalInside(Heat checkHeat)
+        {
+            ClassEnum checkClass = checkHeat.HeatClass;
+            FinalNameEnum round = checkHeat.Final;
+
+            //Es müssen die noch nicht vergebenen Finale untersucht werden
+
+
+            return false;
         }
 
         private Heat DequeueHeat(Queue<Heat> heats)
@@ -250,17 +272,24 @@ namespace Rca.TtGen
         {
             if (heats.Count > 0 && (!AnyScheuduleEndFinals(heats.Peek().HeatClass) || heats.Peek().Final == FinalNameEnum.Finale)) //TODO Prüfen ob alle Endfinale schon verteilt sind
             {
-                Heat currentHeat = DequeueHeat(heats);
-
-                if (currentHeat != null)
+                if (heats.Peek().Final != FinalNameEnum.AdditionalFinale)
                 {
-                    Heats.Add(currentHeat);
+                    Heat currentHeat = DequeueHeat(heats);
 
-                    if (currentHeat.Final != FinalNameEnum.Finale && heats.Count > 0 && heats.Peek() != null && currentHeat.Final == heats.Peek().Final)
+                    if (currentHeat != null)
                     {
-                        Heats.Add(heats.Dequeue());
+                        Heats.Add(currentHeat);
+
+                        if (currentHeat.Final != FinalNameEnum.Finale && heats.Count > 0 && heats.Peek() != null && currentHeat.Final == heats.Peek().Final)
+                        {
+                            Heats.Add(heats.Dequeue());
+                        }
                     }
-                } 
+                }
+                else if (FinalInside(heats.Peek())) //Zusatzfinale
+                {
+                    ;
+                }
             }
         }
 
@@ -377,7 +406,7 @@ namespace Rca.TtGen
         private Queue<Heat> GenerateAdditionalFinals(List<HeatRound> rounds, ClassEnum heatClass)
         {
             Queue<Heat> heats = new Queue<Heat>();
-            FinalCharEnum finChar = FinalCharEnum.A2;
+            FinalCharEnum finChar = FinalCharEnum.Z1;
             int rest = 0;
             foreach (HeatRound round in rounds)
             {
@@ -386,7 +415,7 @@ namespace Rca.TtGen
                     
                 if ((round.Looser + rest) >= GroupSize)
                 {
-                    heats.Enqueue(new Heat(FinalNameEnum.Finale, finChar, GroupSize, heatClass, new TimeSpan(0,10,0), true));
+                    heats.Enqueue(new Heat(FinalNameEnum.AdditionalFinale, finChar, GroupSize, heatClass, new TimeSpan(0,10,0), round.RoundName));
                     rest = round.Looser + rest - GroupSize;
 
                     finChar--;
@@ -399,7 +428,7 @@ namespace Rca.TtGen
                 
                 if (rest >= GroupSize)
                 {
-                    heats.Enqueue(new Heat(FinalNameEnum.Finale, finChar, GroupSize, heatClass, new TimeSpan(0, 10, 0), true));
+                    heats.Enqueue(new Heat(FinalNameEnum.AdditionalFinale, finChar, GroupSize, heatClass, new TimeSpan(0, 10, 0), round.RoundName));
                     rest -= GroupSize;
 
                     finChar--;
@@ -407,7 +436,7 @@ namespace Rca.TtGen
             }
 
             if (rest > 0)
-                heats.Enqueue(new Heat(FinalNameEnum.Finale, finChar, rest, heatClass, new TimeSpan(0, 10, 0), true));
+                heats.Enqueue(new Heat(FinalNameEnum.AdditionalFinale, finChar, rest, heatClass, new TimeSpan(0, 10, 0), rounds.Last().RoundName));
 
             return heats;
         }
